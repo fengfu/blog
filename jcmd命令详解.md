@@ -14,6 +14,8 @@ jcmd一个用来发送诊断命令请求到JVM的工具，这些请求对于控�
 jcmd的用法是:
 `jcmd <process id/main class> <command> [options]`
 
+其中<command>的说明如下：
+
 |命令|说明|
 |---|---|
 |help	|	打印帮助信息，示例：jcmd <PID> help [<command name>]|
