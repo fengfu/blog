@@ -1,3 +1,9 @@
+---
+title: Spring xml扩展机制
+date: 2017-03-06 18:41:09
+tags: Java
+---
+
 ## 介绍
 Spring框架从2.0版本开始，提供了基于Schema风格的XML扩展机制，允许开发者扩展最基本的spring配置文件，这样我们就可以编写自定义的xml bean解析器然后集成到Spring IoC容器中。很多支持Spring的框架，比如Dubbo、mybatis都提供了对Spring xml扩展的支持。
 
