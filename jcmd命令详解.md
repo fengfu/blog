@@ -11,6 +11,7 @@ tags: Java
 翻译成人话就是：
 jcmd一个用来发送诊断命令请求到JVM的工具，这些请求对于控制Java飞行记录器、故障排除、JVM和Java应用诊断来说是比较有用的。jcmd必须与正在运行的JVM在同一台机器上使用，并且使用启动该JVM时的用户权限。
 
+# 用法 #
 jcmd的用法是:
 `jcmd <process id/main class> <command> [options]`
 
