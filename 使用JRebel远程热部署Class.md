@@ -11,8 +11,7 @@ tags: Java
 > 声明: 本文采用 [CC BY-NC-ND 4.0](http://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh "姓名标示-非商业性-禁止改作4.0国际") 授权。
 
 
-<figure><a class="post-image" rel="post-image" href="">![jrebel ](https://zeroturnaround.com/wp-content/uploads/2011/02/jrebel-dl.png "jrebel")</a>
-</figure>
+![jrebel](https://zeroturnaround.com/wp-content/uploads/2011/02/jrebel-dl.png)
 
 在开发 java 程序的时候，如果改动非常频繁，每次改动都要重新打包、部署，对于很重的应用（比如本文所说的 dubbo provider 服务），这样反复的流程十分消耗精力和热情。我们需要一个工具，当代码作改动之后能够立即看到效果。Java 在 1.4 的时候引入了 HotSwap 技术，允许调试者使用同一个类标识来更新类的字节码。这意味着所有对象都可以引用一个更新后的类，并在它们的方法被调用的时候执行新的代码，这就避免了无论何时只要有类的字节码被修改就要重载容器的这种要求<sup id="fnref:hotswap-jrebel">[1](#fn:hotswap-jrebel)</sup>。不幸的是，这种重定义仅限于修改方法体—除了方法体之外，它既不能添加方法或域，也不能修改其他任何东西。
 
@@ -20,11 +19,9 @@ tags: Java
 
 [JRebel](https://zeroturnaround.com/software/jrebel/) 是 java 的热部署插件，它监控已编译的 .class 文件，只要有变动，就立即更新在部署好的应用上，能够实现实时查看代码变化的功能。
 
-<figure><a class="post-image" rel="post-image" href="">![skip build, package and deploy](https://zeroturnaround.com/wp-content/uploads/2016/11/JR_devcycle_2016_c.png "skip build, package and deploy")</a>
+![skip build, package and deploy](https://zeroturnaround.com/wp-content/uploads/2016/11/JR_devcycle_2016_c.png)
 
-<figcaption>skip build, package and deploy</figcaption>
-
-</figure>
+skip build, package and deploy
 
 HotSwap 是工作在虚拟机层面上，且依赖于 JVM 的内部运作，JRebel 用到了 JVM 的两个显著的功能特征—抽象的字节码和类加载器。类加载器允许 JRebel 辨别出类被加载的时刻，然后实时地翻译字节码，用以在虚拟机和可执行代码之间创建另一个抽象层<sup id="fnref:hotswap-jrebel:1">[1](#fn:hotswap-jrebel)</sup>。这种技术也应用在 zeroturnaround 家其他的工具，比如 xrebel。
 
@@ -38,11 +35,10 @@ JRebel 是收费插件，第一次打开的时候需要激活，网上有各种�
 
 安装和激活完毕之后，就可以在 IDE 的配置页看到 JRebel 选项了。
 
-<figure>[![jrebel preference](http://wulfric.qiniudn.com/java/jrebel-preference.png-article.webp "jrebel preference")](http://wulfric.qiniudn.com/java/jrebel-preference.png-origin.webp)
+[![jrebel preference](http://wulfric.qiniudn.com/java/jrebel-preference.png-article.webp)](http://wulfric.qiniudn.com/java/jrebel-preference.png-origin.webp)
 
-<figcaption>jrebel preference</figcaption>
+jrebel preference
 
-</figure>
 
 ## 运行
 
