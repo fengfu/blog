@@ -1,0 +1,103 @@
+---
+title: Sonar规则检查的常见问题
+date: 2017-09-01 18:51:27
+tags: Java
+---
+
+## 1. Methods returns should not be invariant
+
+如果方法不是void，那么它的返回值不应该总是相同的。比如你的方法声明返回值是bool，但代码中无论什么情况总是返回true，那么要么方法设计不合理，要么存在bug。
+
+[Sonar规则描述](http://sonar.corp.qunar.com/coding_rules#rule_key=squid%3AS3516 "Sonar规则描述")
+
+## 2. "@RequestMapping" methods should be "public"
+
+RequestMapping方法必须使用public，否则AOP会有问题。当然，SpringMvc RequestMapping方法声明成private或者protected意义也不大。
+
+[Sonar规则描述](http://sonar.corp.qunar.com/coding_rules#rule_key=squid%3AS3751 "Sonar规则描述")
+
+## 3. Double-checked locking should not be used
+
+不恰当的单例模式实现，在极端情况下会有线程诶品问题，很多人写的单例实现都是有隐患的，可以点下面的链接看看哪些项目里面存在类似问题。
+
+[Sonar规则描述](http://sonar.corp.qunar.com/coding_rules#rule_key=squid%3AS2168 "Sonar规则描述")
+
+单例模式最好的实现方式是使用静态内部类实现，由ClassLoader来实现安全的单例实例化，具体可以看一下这篇文章：[Java 单例真的写对了么?](http://www.importnew.com/18835.html "Java 单例真的写对了么?")
+
+## 4. Loops should not be infinite
+
+循环应该有退出条件。
+
+这个规则目前有一些争议，因为有些涉及生产者-消费者模式的场景中，我们可能需要在一个循环中从阻塞队列里面获取数据进行处理，这种场景是没有break条件的。所以这种case如果被阻断，大家先可以申请放行。
+
+[Sonar规则描述](http://sonar.corp.qunar.com/coding_rules#rule_key=squid%3AS2189 "Sonar规则描述")
+
+## 5. Nested blocks of code should not be left empty
+
+这条规则主要是限制空的catch代码块的出现。我们有些故障是因为在catch代码块里面既没有通过日志记录异常，也没有对异常进行监控，导致问题无法及时发现。鉴于此，我们不允许空的catch代码块的出现，最起码你可以打个日志或者记个监控吧。
+
+另外，这个规则也会限制其他一些空代码块的出现，比如下面：
+
+```
+  for (int i = 0; i < 42; i++){
+
+  }
+```
+这种代码没有任何意义，阻断也没有任何问题。
+
+[Sonar规则描述](http://sonar.corp.qunar.com/coding_rules#rule_key=squid%3AS00108 "Sonar规则描述")
+
+## 6. Throwable.printStackTrace(...) should not be called
+
+printStackTrace不允许使用，最根本的原因还是日志收集不方便。这个没什么好说的，老老实实用log输出吧。
+
+[Sonar规则描述](http://sonar.corp.qunar.com/coding_rules#rule_key=squid%3AS1148 "Sonar规则描述")
+
+## 7. Standard outputs should not be used directly to log anything
+
+System.out.println这种输出有2个问题，一个是SOUT内部实现使用了synchronized，高并发情况下会有性能问题；另一个是SOUT输出到控制台，有可能导致日志收集不到。
+
+[Sonar规则描述](http://sonar.corp.qunar.com/coding_rules#rule_key=squid%3AS106 "Sonar规则描述")
+
+## 8. Synchronization should not be based on Strings or boxed primitives
+
+同步块不应该加在String或基本包装类型上，如Byte、Short、Integer、Long、Float、Double、Boolean、Character。
+
+String不能用作同步块的参数是因为String为不可变对象，任何String对象的改变都将产生一个新的String对象，这也将导致前面加的锁不会被释放。
+
+Integer、Boolean、Double、Long不能作为同步块参数的原因是他们是基本包装类型，包装类型有特殊的逻辑，用一句话说就是Java的自动封箱和解箱操作会导致这些对象在经过运算后不再是原来的对象。
+
+用复杂的话说就是：当把基本变量赋值给包装类型的变量（其实编译过后的操作就是调用包装类型的静态方法valueOf）或者调用静态valueOf方法时：
+
+* Boolean返回的是缓存的对象。
+* 整型（Byte,Short,Integer,Long）会检查该数字是否在1个字节可表示的有符号整数范围内（-128~127），是则返回缓存对象，否则返回新对象。
+* Character会缓存整型值为0~127的字符，同样会检查字符是否落在缓存范围中，是则返回，否则返回新对象。
+* Double和Float的valueOf方法始终返回新对象。
+
+这个问题很多人可能注意不到，希望大家注意。
+
+[Sonar规则描述](http://sonar.corp.qunar.com/coding_rules#rule_key=squid%3AS1860 "Sonar规则描述")
+
+## 9. Non-thread-safe fields should not be static
+
+非线程安全对象不应该作为静态域变量，比如HashMap、SimpleDateFormat、Calendar，此举可能会导致线程安全问题。
+
+[Sonar规则描述](http://sonar.corp.qunar.com/coding_rules#rule_key=squid%3AS2885 "Sonar规则描述")
+
+## 10. Conditionally executed blocks should be reachable
+
+代码中有不可抵达的部分，这种问题较多出现在条件分支中。这种情况一般是逻辑上的问题，最好修复。
+
+[Sonar规则描述](http://sonar.corp.qunar.com/coding_rules#rule_key=squid%3AS2583 "Sonar规则描述")
+
+## 11. Locks should be released
+
+锁使用后应该被释放，否则可能会导致死锁。
+
+[Sonar规则描述](http://sonar.corp.qunar.com/coding_rules#rule_key=squid%3AS2222 "Sonar规则描述")
+
+## 12. Zero should not be a possible denominator
+
+有出现除以0的隐患，最好在前面对除数做判0处理。
+
+[Sonar规则描述](http://sonar.corp.qunar.com/coding_rules#rule_key=squid%3AS3518 "Sonar规则描述")
