@@ -11,7 +11,7 @@ SonarQube是一个非常流行和强大的静态代码检查工具。它可以�
  - JDK 1.8
  - Intellij Idea
  - Maven 3.x或更高
- - SonarQube 5.6
+ - SonarQube LTS 5.6
  - Sonar-runner-dist 2.4
 
 ## 3 开发步骤 ##
