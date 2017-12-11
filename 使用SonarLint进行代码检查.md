@@ -18,29 +18,29 @@ Sonar是一个代码质量管理的开源工具，它通过插件的形式能够
 
 下面，将以Intellij Idea为基础介绍SonarLint插件的使用。
 
-## 1. 安装 ##
+## 1 安装 ##
 
 在Idea的Plugins界面搜索“SonarLint”，在检索结果列表页找到对应的SonarLint，点击右侧的“Install”按钮，安装完毕重启Idea后即可完成插件的安装。
 
 ![安装插件](https://farm5.staticflickr.com/4634/38195936814_d3318454b4_b.jpg)
 
-## 2. 代码检查 ##
+## 2 代码检查 ##
 
 SonarLint插件安装后，就可以使用它对Idea中的项目进行代码检查了。SonarLint能够对单个文件、整个项目、从VCS（版本控制系统，比如git、svn等）拉取的被修改文件这3类进行检查。
 
 开启SonarLint的检查有3个入口：
 
-1. Analyze->SonarLint，如下图：
+1.Analyze->SonarLint，如下图：
 
 ![](https://farm5.staticflickr.com/4558/38195610794_c63be62dd8_b.jpg)
 
-2. 在打开的文件编辑区域点击右键，在弹出的上下文菜单中选择，如下图：
+2.在打开的文件编辑区域点击右键，在弹出的上下文菜单中选择，如下图：
 
 ![](https://farm5.staticflickr.com/4562/38875276892_7c0f79c2a4_z.jpg)
 
 此方式只能对当前文件进行检查。
 
-3. 编辑区底部的Panel，这里可以在"Current file" Tab区域对当前文件进行检查，也可以在“Project files”Tab区域对文件进行全量和从VCS（版本控制系统，比如git、svn等）拉取的被修改文件进行检查，如下图：
+3.编辑区底部的Panel，这里可以在"Current file" Tab区域对当前文件进行检查，也可以在“Project files”Tab区域对文件进行全量和从VCS（版本控制系统，比如git、svn等）拉取的被修改文件进行检查，如下图：
 
 ![](https://farm5.staticflickr.com/4519/38196120834_fa47b16e02_b.jpg)
 
@@ -48,23 +48,25 @@ SonarLint插件安装后，就可以使用它对Idea中的项目进行代码检�
 
 ![](https://farm5.staticflickr.com/4566/38024453305_b355b33948_z.jpg)
 
-## 3. 远程配置 ##
+## 3 远程配置 ##
 
 前面提到的代码检查，默认使用SonarLint内置的规则。我们也可以连接远端的SonarQube服务器，拉取服务器上配置的规则对代码进行检查，这样就能与代码提交时触发的检查规则保持一致了，具体方式如下：
-1. 首先在下图的界面点击“+”创建新的SonarQube Server：
+
+1.首先在下图的界面点击“+”创建新的SonarQube Server：
 
 ![](https://farm5.staticflickr.com/4557/38024453645_871bb2cd83.jpg)
 
-2. 在New SonarQube Server界面中选择右侧的选项，并输入SonarQube URL，点击next：
+2.在New SonarQube Server界面中选择右侧的选项，并输入SonarQube URL，点击next：
 
 ![](https://farm5.staticflickr.com/4557/27134414809_a16b3fc406_b.jpg)
 
-3. 在Authentication界面选择Login/Password，并输入用户名和密码：
+3.在Authentication界面选择Login/Password，并输入用户名和密码：
 
 ![](https://farm5.staticflickr.com/4532/27134414729_f52684145d_b.jpg)
 
 验证通过后点击Finish即可完成SonarQube Server的配置。
-4. 在SonarLint界面选择Server中配置的project，要与当前项目一致，否则可能会拉取错误的规则配置。
+
+4.在SonarLint界面选择Server中配置的project，要与当前项目一致，否则可能会拉取错误的规则配置。
 
 ![](https://farm5.staticflickr.com/4739/38875276722_f5b65063f0_b.jpg)
 
