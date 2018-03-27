@@ -9,6 +9,8 @@ tags: 性能
 
 下面的内容是转载的一篇译文，如果需要查看译文原文，请点击[这里](https://segmentfault.com/a/1190000008751999),英语好的同学也可以直接查看[英文原作](http://highscalability.com/blog/2016/1/25/design-of-a-modern-cache.html)。
 
+==========以下是原文内容==========
+
 缓存是提升性能的通用方法，现在大多数的缓存实现都使用了经典的技术。这篇文章中，我们会发掘[Caffeine](https://github.com/ben-manes/caffeine)中的现代的实现方法。Caffeine是一个开源的Java缓存库，它能提供高命中率和出色的并发能力。期望读者们能被这些想法激发，进而将它们应用到任何你喜欢的编程语言中。
 
 ## 驱逐策略 ##
