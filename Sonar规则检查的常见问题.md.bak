@@ -18,7 +18,7 @@ RequestMapping方法必须使用public，否则AOP会有问题。当然，Spring
 
 ## 3. Double-checked locking should not be used
 
-不恰当的单例模式实现，在极端情况下会有线程诶品问题，很多人写的单例实现都是有隐患的，可以点下面的链接看看哪些项目里面存在类似问题。
+不恰当的单例模式实现，在极端情况下会有线程安全问题，很多人写的单例实现都是有隐患的，可以点下面的链接看看哪些项目里面存在类似问题。
 
 [Sonar规则描述](http://sonar.corp.qunar.com/coding_rules#rule_key=squid%3AS2168 "Sonar规则描述")
 
