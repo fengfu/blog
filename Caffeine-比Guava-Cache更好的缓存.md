@@ -19,15 +19,15 @@ tags: 性能
 
 现代缓存扩展了对历史数据的使用，结合就近程度（recency）和访问频次（frequency）来更好的预测数据。其中一种保留历史信息的方式是使用popularity sketch（一种压缩、概率性的数据结构）来从一大堆访问事件中定位频繁的访问者。可以参考[CountMin Sketch](http://dimacs.rutgers.edu/~graham/pubs/papers/cmsoft.pdf)算法，它由计数矩阵和多个哈希方法实现。发生一次读取时，矩阵中每行对应的计数器增加计数，估算频率时，取数据对应是所有行中计数的最小值。这个方法让我们从空间、效率、以及适配矩阵的长宽引起的哈希碰撞的错误率上做权衡。
 
-![CountMin Sketch](https://sfault-image.b0.upaiyun.com/198/843/1988435212-58d64be00bb9d_articlex)
+![CountMin Sketch](https://live.staticflickr.com/65535/48288469627_b187179bb9_o.png)
 
 [Window TinyLFU](https://arxiv.org/pdf/1512.00727.pdf)（W-TinyLFU）算法将sketch作为过滤器，当新来的数据比要驱逐的数据高频时，这个数据才会被缓存接纳。这个许可窗口给予每个数据项积累热度的机会，而不是立即过滤掉。这避免了持续的未命中，特别是在突然流量暴涨的的场景中，一些短暂的重复流量就不会被长期保留。为了刷新历史数据，一个时间衰减进程被周期性或增量的执行，给所有计数器减半。
 
-![Window TinyLFU](https://sfault-image.b0.upaiyun.com/274/307/2743073853-58d64be0088fe_articlex)
+![Window TinyLFU](https://live.staticflickr.com/65535/48288366581_e1ae8e8301_o.png)
 
 对于长期保留的数据，W-TinyLFU使用了分段LRU（Segmented LRU，缩写SLRU）策略。起初，一个数据项存储被存储在试用段（probationary segment）中，在后续被访问到时，它会被提升到保护段（protected segment）中（保护段占总容量的80%）。保护段满后，有的数据会被淘汰回试用段，这也可能级联的触发试用段的淘汰。这套机制确保了访问间隔小的热数据被保存下来，而被重复访问少的冷数据则被回收。
 
-![](https://sfault-image.b0.upaiyun.com/571/159/571159220-58d64be031155_articlex)
+![](https://live.staticflickr.com/65535/48288366471_f22bb40812_o.png)
 
 如图中数据库和搜索场景的结果展示，通过考虑就近程度和频率能大大提升LRU的表现。一些高级的策略，像ARC，LIRS和W-TinyLFU都提供了接近最理想的命中率。想看更多的场景测试，请查看相应的论文，也可以在使用simulator来测试自己的场景。
 
@@ -43,17 +43,17 @@ tags: 性能
 
 在Caffeine中，有一组缓冲区被用来记录读写。一次访问首先会被因线程而异的哈希到stripped ring buffer上，当检测到竞争时，缓冲区会自动扩容。一个ring buffer容量满载后，会触发异步的执行操作，而后续的对该ring buffer的写入会被丢弃，直到这个ring buffer可被使用。虽然因为ring buffer容量满而无法被记录该访问，但缓存值依然会返回给调用方。这种策略信息的丢失不会带来大的影响，因为W-TinyLFU能识别出我们希望保存的热点数据。通过使用因线程而异的哈希算法替代在数据项的键上做哈希，缓存避免了瞬时的热点key的竞争问题。
 
-![](https://sfault-image.b0.upaiyun.com/270/327/2703271825-58d64be011a4f_articlex)
+![](https://live.staticflickr.com/65535/48288366416_6398fcd9da_o.png)
 
 写数据时，采用更传统的并发队列，每次变更会引起一次立即的执行。虽然数据的损失是不可接受的，但我们仍然有很多方法可以来优化写缓冲区。所有类型的缓冲区都被多个的线程写入，但却通过单个线程来执行。这种多生产者/单个消费者的模式允许了更简单、高效的算法来实现。
 
 缓冲区和细粒度的写带来了单个数据项的操作乱序的竞态条件。插入、读取、更新、删除都可能被各种顺序的重放，如果这个策略控制的不合适，则可能引起悬垂索引。解决方案是通过状态机来定义单个数据项的生命周期。
 
-![](https://sfault-image.b0.upaiyun.com/270/327/2703271825-58d64be011a4f_articlex)
+![](https://live.staticflickr.com/65535/48288366416_6398fcd9da_o.png)
 
 在[基准测试](https://github.com/ben-manes/caffeine/wiki/Benchmarks#read-100-1)中，缓冲区随着哈希表的增长而增长，它的的使用相对更节省资源。读的性能随着CPU的核数线性增长，是哈希表吞吐量的33%。写入有10%的性能损耗，这是因为更新哈希表时的竞争是最主要的开销。
 
-![](https://sfault-image.b0.upaiyun.com/250/918/2509180021-58d64be00f7f4_articlex)
+![](https://live.staticflickr.com/65535/48288469367_15de7a7e27_o.png)
 
 ## 结论 ##
 还有许多实用的话题没有被覆盖到。包括最小化内存的技巧，当复杂度上升时保证质量的测试技术以及确定优化是否值得的性能分析方法。这些都是缓存的实践者需要关注的点，因为一旦这些被忽视，就很难重拾掌控缓存带来的复杂度的信心。
